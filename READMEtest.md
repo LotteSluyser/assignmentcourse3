@@ -1,5 +1,4 @@
-# assignmentcourse3
-Assignment Course 3 Getting and Cleaning Data
+## Assignment Course 3 Getting and Cleaning data
 
 Assignment Submission Files:
 
