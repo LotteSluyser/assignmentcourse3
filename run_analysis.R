@@ -13,6 +13,7 @@ trainingkort<- train[grepl("[Mm]ean|std", names(train))]
 ## add activities and subjects and a column to indicate trainig or test
 merge3<- cbind(activitytrain, trainingkort)
 totaltrain<-cbind(subjecttrain,merge3)
+## adding a column for "training" or "testing" in case that is needed later
 totaltrain$set<- "train"
 names(totaltrain)[1]<- "subject"
 names(totaltrain)[2]<- "activity" 
@@ -43,4 +44,25 @@ Totaldatasorted<- arrange(totaldata, subject, activity)
 TSD<- Totaldatasorted[,c(ncol(Totaldatasorted),1:(ncol(Totaldatasorted)-1))]
 
 ## Make 2nd independent tidy data set with averages for each activity
-## and each subject
+## and each subject. According to instruction by mentor on the forum this can be
+## a wide format dataframe with subject&activity combined.
+
+# Add column with merged subject and activity
+TSD$id=paste(TSD$subject, TSD$activity, sep="_")
+# remove 3 columns
+datafinal<- TSD
+datafinal$subject <- NULL
+datafinal$set <- NULL
+datafinal$activity <- NULL
+## move pasted column to 1st column
+datafinal2<- datafinal[,c(ncol(datafinal),1:(ncol(datafinal)-1))]
+
+# aggregate to average the variables for each activity and subject
+groupdata<- aggregate(datafinal2[,2:87], list(datafinal2$id), mean)
+## the sorting of the id changed because of this. Change back.
+library(gtools)
+sortedgroupdata<- groupdata[mixedorder(groupdata$Group.1),]
+##change columnvariables to rownames
+tidydata <- data.frame(sortedgroupdata[,-1], row.names=sortedgroupdata[,1])
+
+
